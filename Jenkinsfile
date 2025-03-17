@@ -3,25 +3,32 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                // Git checkout est automatique avec Pipeline from SCM
-                echo 'Code récupéré depuis GitHub'
+                git 'https://github.com/FatimetouA/SB_Orch.git'
             }
         }
-        stage('Compile') {
+        stage('Build') {
             steps {
-                script {
-                    // Compile le code Java - utilisez bat pour Windows
-                    bat 'javac HelloWorld.java'
-                }
+                sh 'mvn clean install'
             }
         }
-        stage('Run') {
+        stage('Test') {
             steps {
-                script {
-                    // Exécute le code Java compilé
-                    bat 'java HelloWorld'
-                }
+                sh 'mvn test' 
             }
+        }
+        stage('Package') {
+            steps {
+                sh 'mvn package' 
+            }
+        }
+        
+    }
+    post {
+        success {
+            echo 'Build succeeded!'
+        }
+        failure {
+            echo 'Build failed!'
         }
     }
 }
